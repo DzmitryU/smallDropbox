@@ -67,11 +67,33 @@
             </div>
             <div role="tabpanel" class="tab-pane" id="upload">
                 <h1 class="text-center">Upload your files</h1>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <input id="file-upload" type="file" name="files[]" data-url="/controller/upload" multiple />
             </div>
         </div>
 
     </div>
 </div>
+
+<script src="/resources/js/jquery.ui.widget.js"></script>
+<script src="/resources/js/jquery.iframe-transport.js"></script>
+<script src="/resources/js/jquery.fileupload.js"></script>
+
+<script>
+    $(function () {
+        $('#file-upload').fileupload({
+            dataType: 'json',
+            done: function (e, data) {
+                $.each(data.result.files, function (index, file) {
+
+                });
+            }
+        })
+    });
+</script>
 
 </body>
 </html>
