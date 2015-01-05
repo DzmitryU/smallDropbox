@@ -41,37 +41,28 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Test 1</td>
-                        <td>12.12.14</td>
-                        <td>13480</td>
-                        <td><button type="button" class="btn btn-sm btn-default">Download</button></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Test 2</td>
-                        <td>12.12.14</td>
-                        <td>13480</td>
-                        <td><button type="button" class="btn btn-sm btn-default">Download</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Test 3</td>
-                        <td>12.12.14</td>
-                        <td>13480</td>
-                        <td><button type="button" class="btn btn-sm btn-default">Download</button></td>
-                    </tr>
+                    <c:forEach var="file" items="${files}">
+                        <tr>
+                            <td>${file.id}</td>
+                            <td>${file.name}</td>
+                            <td>${file.date}</td>
+                            <td>${file.size}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-default">Download</button>
+                            </td>
+                        </tr>
+                    </c:forEach>
                     </tbody>
                 </table>
             </div>
             <div role="tabpanel" class="tab-pane" id="upload">
                 <h1 class="text-center">Upload your files</h1>
+
                 <div class="progress">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
-                         aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar progress-bar-striped active" id="upload-progress" role="progressbar"
+                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <input id="file-upload" type="file" name="files[]" data-url="/controller/upload" multiple />
+                <input id="file-upload" type="file" name="files[]" data-url="/upload" multiple/>
             </div>
         </div>
 
@@ -88,8 +79,11 @@
             dataType: 'json',
             done: function (e, data) {
                 $.each(data.result.files, function (index, file) {
-
                 });
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#upload-progress').css('width', progress + '%').html(progress + '%');
             }
         })
     });
