@@ -2,13 +2,8 @@ package com.sprhib.controller;
 
 import com.sprhib.model.FileMeta;
 import com.sprhib.service.FileService;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,11 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -29,25 +21,34 @@ public class HomeController {
     @Autowired
     private FileService fileService;
 
+    private ArrayList<String> uploadServices = new ArrayList<String>() {{
+        add("http://localhost:8081/upload");
+        add("http://localhost:8082/upload");
+    }};
+
+    private ArrayList<String> downloadServices = new ArrayList<String>() {{
+        add("http://localhost:8083/download");
+        add("http://localhost:8084/download");
+    }};
+
 	@RequestMapping(value="/")
-	public ModelAndView mainPage() {
-        ModelAndView modelAndView = new ModelAndView("home");
-        List<FileMeta> files = fileService.getFiles();
-        //Collections.sort(files);
-        modelAndView.addObject("files", files);
-        return modelAndView;
+	public String mainPage() {
+        String server = downloadServices.remove(downloadServices.size() - 1);
+        downloadServices.add(0, server);
+        return "redirect:" + server;
 	}
 
-    @RequestMapping(value="/upload", method = RequestMethod.POST)
-    public @ResponseBody
-    LinkedList<FileMeta> upload(HttpServletRequest request, HttpServletResponse response) {
-        LinkedList<FileMeta> result = new LinkedList<FileMeta>();
-        
-        return result;
+    @RequestMapping(value="/download", method = RequestMethod.GET)
+    public String download(HttpServletRequest request, HttpServletResponse response) {
+        String server = downloadServices.remove(downloadServices.size() - 1);
+        downloadServices.add(0, server);
+        return "redirect:" + server;
     }
-	
-	@RequestMapping(value="/index")
-	public ModelAndView indexPage() {
-		return new ModelAndView("home");
-	}
+
+    @RequestMapping(value="/upload", method = RequestMethod.GET)
+    public String upload(HttpServletRequest request, HttpServletResponse response) {
+        String server = uploadServices.remove(uploadServices.size() - 1);
+        uploadServices.add(0, server);
+        return "redirect:" + server;
+    }
 }
